@@ -39,5 +39,12 @@ jobs:
         uses: returntocorp/semgrep-action@v1
         with:
           config: p/owasp-top-ten
+          generateSarif: "1"
         env:
-          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }} # Optional, but recommended for dashboarding
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+
+      - name: Upload SARIF file for GitHub Advanced Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
+        if: always()
