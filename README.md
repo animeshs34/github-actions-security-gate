@@ -1,28 +1,44 @@
-# CI/CD Security Gate POC
+# 🛡️ CI/CD Security Gate POC
 
-This repository demonstrates a "Security Gate" in a CI/CD pipeline using GitHub Actions. It is designed to catch security issues early in the development lifecycle (Shift-Left).
+[![Security Gate](https://github.com/animeshs34/github-actions-security-gate/actions/workflows/security.yml/badge.svg)](https://github.com/animeshs34/github-actions-security-gate/actions/workflows/security.yml)
+![License](https://img.shields.io/github/license/animeshs34/github-actions-security-gate)
+![Topics](https://img.shields.io/github/topics/animeshs34/github-actions-security-gate)
 
-## Included Security Checks
+A robust "Security Gate" implementation for CI/CD pipelines. This project demonstrates how to "Shift Left" by integrating automated security checks directly into the development workflow using GitHub Actions.
 
-1.  **Secret Scanning**: Uses `Gitleaks` to find hardcoded credentials and secrets.
-2.  **Dependency Audit**: Uses `pip-audit` to scan project dependencies for known CVEs.
-3.  **SAST (Static Application Security Testing)**: Uses `Semgrep` with the `p/owasp-top-ten` ruleset to find insecure code patterns.
+## 🚀 The Core Idea
+Most security breaches happen because of small mistakes: a hardcoded key, an outdated library, or a common code flaw. This project blocks these mistakes **before** they can be merged into the main codebase.
 
-## Repository Structure
+## 🛠️ Security Stack
+The pipeline runs three essential security stages on every push and PR:
 
-*   `.github/workflows/security.yml`: The GitHub Actions workflow file.
-*   `app.py`: Deliberately vulnerable Python code (SQLi, Command Injection).
-*   `secrets_test.py`: Contains fake hardcoded secrets for testing.
-*   `requirements.txt`: Includes a vulnerable version of the `requests` library.
+| Stage                | Tool                                             | Description                                                                  |
+| :------------------- | :----------------------------------------------- | :--------------------------------------------------------------------------- |
+| **Secret Scanning**  | [Gitleaks](https://github.com/gitleaks/gitleaks) | Scans for hardcoded API keys, tokens, and credentials.                       |
+| **Dependency Audit** | [pip-audit](https://github.com/pypa/pip-audit)   | Checks Python dependencies for known CVEs.                                   |
+| **SAST**             | [Semgrep](https://semgrep.dev/)                  | Performs Static Application Security Testing using the OWASP Top 10 ruleset. |
 
-## How to Test
+## 📁 Repository Structure
+*   `.github/workflows/security.yml`: The 💜 heart of the project. A multi-stage YAML pipeline that fails if any security issue is found.
+*   `app.py`: Contains intentional SQL Injection and Command Injection for testing SAST.
+*   `secrets_test.py`: Contains intentional (fake) secrets to test secret scanning.
+*   `requirements.txt`: Uses an outdated `requests` version to trigger dependency audits.
+*   `.gitleaksignore`: Demonstrates how to manage false positives in a production environment.
 
-1.  Push this code to a new GitHub repository or open a Pull Request.
-2.  Observe the "Actions" tab.
-3.  The pipeline **should fail** because of the intentional vulnerabilities provided in this POC.
+## 🔍 Intentional Vulnerability Guide
+This repo is **deliberately insecure** for demonstration purposes:
+1.  **SQL Injection**: Located in `app.py:get_user_data()` using f-strings for queries.
+2.  **Command Injection**: Located in `app.py:run_system_command()` using `os.system`.
+3.  **Hardcoded Secrets**: AWS and Stripe keys located in `secrets_test.py`.
+4.  **Vulnerable Dependency**: `requests==2.20.0` has documented HIGH severity vulnerabilities.
 
-## Best Practices Explored
+## 📊 Pipeline Reports
+This project is configured to export **SARIF** (Static Analysis Results Interchange Format) reports. Detailed findings are natively integrated into the **GitHub Security tab**, providing a professional dashboard for vulnerability management.
 
-*   **Failure Thresholds**: In this POC, the pipeline is configured to fail on *any* finding. In a real project, you might set thresholds (e.g., fail only on `CRITICAL` or `HIGH` severity).
-*   **False Positives**: Secret scanners can sometimes flag test keys. Use `.gitleaksignore` to manage these.
-*   **Reporting**: GitHub Actions provides a summary of scan results in the workflow run logs.
+## 🔧 How to Use
+1.  **Fork** this repository.
+2.  **Push a change** or open a Pull Request.
+3.  Observe the pipeline block the merge under the **Actions** tab.
+
+---
+*Created as a Proof of Concept for DevSecOps best practices.*
