@@ -1,0 +1,6 @@
+# Gitleaks ignore file
+# Use this to ignore known false positives or test secrets that are safe.
+# Format: [rule-id],[fingerprint] or just comments.
+
+# Example: Ignore the fake secret used in demonstration
+# sk_test_this_is_a_very_fake_key_12345
